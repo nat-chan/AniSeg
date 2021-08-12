@@ -89,7 +89,12 @@ def main(_):
   sess.run(tf.local_variables_initializer())
 
   for i, image_path in enumerate(input_image_paths):
-    image_np = util_io.imread(image_path)
+    try:
+      image_np = util_io.imread(image_path)
+    except:
+      with open("/tmp/aniseg.log", "a") as f:
+        f.write(image_path+"\n")
+      image_np = np.zeros((256, 256, 3), dtype="float32")
     result = inference_class.infer_detections(
       sess, image_tensor, detected_tensors,
       min_score_thresh=FLAGS.min_score_thresh,
